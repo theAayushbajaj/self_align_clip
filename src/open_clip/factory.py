@@ -48,14 +48,33 @@ def _rescan_model_configs():
 _rescan_model_configs()  # initial populate of model config registry
 
 
+# def load_state_dict(checkpoint_path: str, map_location='cpu'):
+#     checkpoint = torch.load(checkpoint_path, map_location=map_location)
+#     if isinstance(checkpoint, dict) and 'state_dict' in checkpoint:
+#         state_dict = checkpoint['state_dict']
+#     else:
+#         state_dict = checkpoint
+#     if next(iter(state_dict.items()))[0].startswith('module'):
+#         state_dict = {k[7:]: v for k, v in state_dict.items()}
+#     return state_dict
+
 def load_state_dict(checkpoint_path: str, map_location='cpu'):
-    checkpoint = torch.load(checkpoint_path, map_location=map_location)
+    try:
+        checkpoint = torch.load(checkpoint_path, map_location=map_location)
+    except RuntimeError:
+        print(f"Loading {checkpoint_path} as a TorchScript model.")
+        model = torch.jit.load(checkpoint_path, map_location=map_location)
+        return model.state_dict()
+    
+    # Check if the loaded object is already a state_dict or needs unpacking
     if isinstance(checkpoint, dict) and 'state_dict' in checkpoint:
         state_dict = checkpoint['state_dict']
     else:
         state_dict = checkpoint
+        
     if next(iter(state_dict.items()))[0].startswith('module'):
-        state_dict = {k[7:]: v for k, v in state_dict.items()}
+        state_dict = {k[len('module.'):]: v for k, v in state_dict.items()}
+    
     return state_dict
 
 
@@ -65,6 +84,21 @@ def load_checkpoint(model, checkpoint_path, strict=True):
     incompatible_keys = model.load_state_dict(state_dict, strict=strict)
     return incompatible_keys
 
+def load_checkpoint(model, checkpoint_path, strict=True):
+    # Attempt to load the model as a TorchScript if torch.load fails
+    try:
+        state_dict = torch.load(checkpoint_path, map_location='cpu')
+    except RuntimeError:
+        # This assumes the error is due to a TorchScript model
+        model_scripted = torch.jit.load(checkpoint_path)
+        state_dict = model_scripted.state_dict()
+    
+    # Resize position embeddings if needed (specific to your model's requirements)
+    resize_pos_embed(state_dict, model)
+    
+    # Load the state dict into the model
+    incompatible_keys = model.load_state_dict(state_dict, strict=strict)
+    return incompatible_keys
 
 def create_model(
         model_name: str,

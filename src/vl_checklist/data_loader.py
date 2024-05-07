@@ -22,6 +22,7 @@ class DataLoader(object):
             config = yaml.load(
                 open(os.path.join(self.cur_dir, 'corpus', self.version, type, f'{corpus_name}.yaml'), 'r'),
                 Loader=yaml.FullLoader)
+            print('-'*10)
             print(config["ANNO_PATH"])
             m = json.load(open(config["ANNO_PATH"]))
             for x in m:

@@ -113,6 +113,7 @@ class Evaluate(object):
         d = DataLoader(self.data_names,self.args, data_type, self.task)
         results = {}
         index = 0
+        print(f'Length of data: {len(d.data)}')
 
         if self.task == 'itc':
             for name in d.data:
@@ -134,12 +135,15 @@ class Evaluate(object):
                     texts_pos = [z['texts_pos'][0] for z in batch]
                     texts_neg = [z['texts_neg'][0] for z in batch]
 
+                    print(f'Length of images: {len(images)}')
+                    print(f'Length of texts_pos: {len(texts_pos)}')
+
                     result_pos = self.clip_model_wrapper(images, texts_pos)
                     result_neg = self.clip_model_wrapper(images, texts_neg)
 
                     result_t1 = zip(result_pos["probs"], result_neg["probs"])
                     result_tmp = list(result_t1)
-
+                    print(f'Result temp length: {len(result_tmp)}')
 
                     for i in range(len(result_tmp)):
                         index = index + 1
@@ -157,6 +161,7 @@ class Evaluate(object):
                             num_f += 1
 
                 endtime = time.time()
+                print(f'num_t: {num_t}, num_f: {num_f}')
                 accuracy = float(num_t) / (num_t + num_f)
                 results[name] = round(accuracy, 4)
                 file_name = data_type.replace("/", "_")

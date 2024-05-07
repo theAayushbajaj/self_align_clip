@@ -7,7 +7,6 @@ import random
 from datetime import datetime
 
 import numpy as np
-import cvar_pyutils.debugging_tools
 import torch
 from torch import optim
 from torch.cuda.amp import GradScaler
@@ -72,6 +71,7 @@ def main():
     args.log_path = None
 
     if args.debug:
+        import cvar_pyutils.debugging_tools
         if args.debug_ip is None:
             import pydevd_pycharm
             pydevd_pycharm.settrace(os.environ['SSH_CONNECTION'].split()[0], port=args.debug_port,
@@ -146,6 +146,7 @@ def main():
         image_std=args.image_std,
         lora = args.lora,
         freeze_img = args.freeze_img,
+        cache_dir= args.cache_dir
     )
     random_seed(args.seed, args.rank)
 

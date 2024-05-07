@@ -1,0 +1,26 @@
+# Ignore Python bytecode files
+__pycache__/
+
+# Ignore temporary files
+*.tmp
+*.bak
+*.swp
+*.~lock.*
+*.DS_Store
+
+# Ignore data directories
+CC3M_data/**
+CC3M_positives/**
+
+# ignore model dir
+Outputs/**
+
+vl_datasets/**
+vl_checklist_annot_data/**
+
+src/pretrained/**
+
+# ignore log and slurm outputs
+**.log
+**.out
+**.sh

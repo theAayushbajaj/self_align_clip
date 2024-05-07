@@ -1,7 +1,7 @@
 import argparse
 import os
 
-parent_dir = os.path.abspath(os.path.join(__file__, "..", "..",".."))
+parent_dir = '/home/aayushb/scratch/TSVLC'#os.path.abspath(os.path.join(__file__, "..", "..",".."))
 
 def get_default_params(model_name):
     # Params from paper (https://arxiv.org/pdf/2103.00020.pdf)
@@ -19,6 +19,13 @@ def parse_args():
         type=str,
         default=f'{parent_dir}',
         help="root code dir",
+    )
+
+    parser.add_argument(
+        "--cache_dir",
+        type=str,
+        default=f'/home/aayushb/.cache',
+        help="cache dir",
     )
 
     parser.add_argument(
@@ -48,7 +55,7 @@ def parse_args():
     parser.add_argument(
         "--dataset-type",
         choices=["webdataset", "csv", "auto"],
-        default="auto",
+        default="csv",
         help="Which type of dataset to process."
     )
     parser.add_argument(
@@ -109,10 +116,10 @@ def parse_args():
         "--workers", type=int, default=32, help="Number of dataloader workers per GPU."
     )
     parser.add_argument(
-        "--batch-size", type=int, default=128, help="Batch size per GPU."
+        "--batch-size", type=int, default=256, help="Batch size per GPU."
     )
     parser.add_argument(
-        "--epochs", type=int, default=5, help="Number of epochs to train for."
+        "--epochs", type=int, default=100, help="Number of epochs to train for."
     )
     parser.add_argument("--lr", type=float, default=None, help="Learning rate.")
     parser.add_argument("--beta1", type=float, default=None, help="Adam beta 1.")
