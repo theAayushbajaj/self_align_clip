@@ -1,7 +1,7 @@
 # Self Aligning VLMs with a focus on Image Modality
 
-
-"train_with_cap.csv" and "val_with_cap.csv" are also in the google drive ^^ 
+Note: Code was adopted from https://github.com/SivanDoveh/TSVLC/tree/main with 
+modifications for synthetic data pipeline, evaluation on VL-Checklist and other minor changes.
 
 ## Installation:
 ### Requirements
@@ -36,9 +36,15 @@ To generate synthetic data, run the following command:
 python dataset_pipeline/generate_synthetic_data.py --data_dir /path/to/self_align_clip/
 ```
 
+### Converting JSON to TSV for code compatibility
+To convert the JSON files to TSV files, run the following command:  
+```shell script
+python training/json_to_tsv.py
+```
+
 ### Evaluation data
 Prepare vl checklist dataset as described in https://github.com/om-ai-lab/VL-CheckList/blob/main/DATASETS.md  
-Then move the vl dataset to `TSVLC/vl_datasets/`  
+Then move the vl dataset to `self_align_clip/vl_datasets/`  
 If you followed the instructions correctly, you should have the following folders inside vl_datasets: **'hake', 'swig', 'vg'**. 
 
 ## Training
@@ -48,7 +54,7 @@ First, navigate to the src directory:
 ```shell script
 cd src
 ```
-The model will be saved in `TSVLC/Outputs/exp_name/checkpoints`
+The model will be saved in `self_align_clip/Outputs/exp_name/checkpoints`
 
 ```shell script
 python training/main.py --name exp_name --vl_pos --lora 4 --pretrained openai
@@ -56,7 +62,7 @@ python training/main.py --name exp_name --vl_pos --lora 4 --pretrained openai
 
 ## Evaluation
 ### Run the evaluation script
-All vl_checklist jsons will be saved in `TSVLC/eval_jsons/clip/exp_name/` and the result will be printed. 
+All vl_checklist jsons will be saved in `self_align_clip/eval_jsons/clip/exp_name/` and the result will be printed. 
 To prepare the vl checklist evaluate results for the experiment **exp_name** run the following command:
 ```shell script
 python training/main.py  --lora 4 --pretrained openai --eval_vl_cklist --eval_only --resume /path/to/checkpoint
